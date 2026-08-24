@@ -613,6 +613,52 @@ foreach ($dq in $drillQs) {
 [void]$drlHtml.Append('<div class="soptotal">Total: <b id="wcdtot">0</b> words <button class="btn" id="drillExp" style="padding:5px 12px;font-size:12px">&#11015;&#65039; Export answers (.txt)</button></div></div>')
 $drillBlock = '<h3 class="t-h" style="color:var(--brass-dk)">Interview drill &mdash; eight answers every panel will ask for</h3><p class="lead">Same discipline as the SoP Lab: attempt from memory, check the skeleton, rewrite until it fits the word budget. Answers autosave locally; export before interviews and read them aloud once more.</p>' + $drlHtml.ToString()
 
+# ---------- 6h. proposal forge: architecture, risks, rubric, lab ----------
+$forgeParts = @(
+  @{ t='1 &middot; Title'; d='Formula: <b>method</b> + <b>system</b> + <b>outcome</b>. A reviewer should know the whole project from the title alone.'; ex='Sheaf-based geometric deep learning for p53 signalling response prediction' }
+  @{ t='2 &middot; Summary (~150 w)'; d='Four sentences: problem, gap, your move, expected result. Written LAST, placed FIRST.'; ex='Problem: rescue phenotypes are context-dependent. Gap: GNNs oversmooth directional biology. Move: cellular sheaf on pathway graphs. Result: calibrated triage lists.' }
+  @{ t='3 &middot; Background'; d='A funnel: field (2 sentences) -> subfield (3) -> the precise gap YOU close (2), citing 8&ndash;12 sources. Every citation earns its place by setting up your move.'; ex='End with: no existing model encodes edge directionality at cell level - exactly what a sheaf structure provides.' }
+  @{ t='4 &middot; Hypothesis + aims'; d='ONE falsifiable hypothesis sentence; then 2&ndash;4 aims that are independent, feasible in the funding window, each with a concrete milestone. If two aims share one dependency chain, one is decoration.'; ex='H: sheaf encoding improves p53-rescue prediction AND yields calibrated uncertainty. A1 build, A2 benchmark, A3 translate.' }
+  @{ t='5 &middot; Design &amp; methods'; d='Per aim: data source (named), approach, validation, and a FALLBACK if the primary route stalls. Reviewers fund people who already imagined failure.'; ex='If DepMap fitness labels prove noisy: fall back to PRISM screens; splits frozen before any tuning.' }
+  @{ t='6 &middot; Outputs &amp; impact'; d='Concrete artefacts: papers (venue class named), datasets/tools released, who uses them next. Impact without a named user is decoration.'; ex='Preprint by month 15; curated dataset release; wet-lab triage shortlist adopted by Buffa lab.' }
+  @{ t='7 &middot; Timeline &amp; risks'; d='A simple phase bar suffices; the RISK TABLE is what signals maturity: risk / likelihood / mitigation, at least three rows.'; ex='Worked example below - taken straight from the p53 proposal.' }
+)
+$forgeCards = New-Object System.Text.StringBuilder
+foreach ($fp in $forgeParts) { [void]$forgeCards.Append('<div class="card"><h3>' + $fp.t + '</h3><p>' + $fp.d + '</p><p class="wx"><b style="color:var(--brass-dk)">Example:</b> ' + (Esc ([string]$fp.ex)) + '</p></div>') }
+$riskRows = @(
+  @('DepMap CRISPR labels too noisy for rescue phenotype', 'Medium', 'Cross-check with PRISM; restrict to well-profiled lines; document label provenance')
+  @('Sheaf compute exceeds IFOM HPC allocation', 'Low', 'Subsample pathways by centrality; mixed-precision training; ETH CSCS backup via Lio collaboration')
+  @('Wet-lab triage list not actionable for partners', 'Medium', 'Monthly checkpoint with Buffa lab; pre-agreed criteria; conformal set-size cap')
+)
+$rr2 = New-Object System.Text.StringBuilder
+foreach ($rw in $riskRows) { [void]$rr2.Append('<tr><td>' + (Esc ([string]$rw[0])) + '</td><td>' + (Esc ([string]$rw[1])) + '</td><td>' + (Esc ([string]$rw[2])) + '</td></tr>') }
+$rubricRows = @(
+  @('Significance - does the gap matter?', '25%', 'Funnel lands on a gap a reviewer cares about')
+  @('Approach - is the method sound?', '30%', 'Sheaf choice justified vs baselines; validation named per aim')
+  @('Feasibility - can THIS person do it?', '20%', 'Preliminary work exists (RA record); fallbacks written')
+  @('Fit - candidate <-> programme', '15%', 'Named groups/modules; environment answers a real need')
+  @('Training value - what will you become?', '10%', 'Skills ladder explicit: pipelines -> calibrated models -> translational contact')
+)
+$rb2 = New-Object System.Text.StringBuilder
+foreach ($rw2 in $rubricRows) { [void]$rb2.Append('<tr><td>' + (Esc ([string]$rw2[0])) + '</td><td><b>' + (Esc ([string]$rw2[1])) + '</b></td><td>' + (Esc ([string]$rw2[2])) + '</td></tr>') }
+$forgeLab = New-Object System.Text.StringBuilder
+[void]$forgeLab.Append('<div id="forgelab" class="sopwrap"><div class="sophead"><b>Forge Lab</b> &mdash; draft YOUR proposal spine here (BIF, MSCA-DN, departmental studentships). Autosaved.</div>')
+$forgeF = @(
+  @{ k='fa-hyp'; w=40; t='Central hypothesis (one sentence!)'; d='Falsifiable, mechanistic, no "and" chaining three ideas. If it cannot be wrong it is not science.' }
+  @{ k='fa-a1'; w=60;  t='Aim 1 - build / measure'; d='What you construct first and its milestone artefact.' }
+  @{ k='fa-a2'; w=60;  t='Aim 2 - benchmark / test'; d='Comparison against named baselines; frozen evaluation protocol.' }
+  @{ k='fa-a3'; w=60;  t='Aim 3 - translate / release'; d='The output someone else touches: tool, list, dataset, paper.' }
+)
+foreach ($ff in $forgeF) {
+  [void]$forgeLab.Append('<div class="sopblock"><label><b>' + $ff.t + '</b> <span class="mut">max ~' + $ff.w + ' words &middot; <span id="wc-' + $ff.k + '">0</span></span></label><p class="mvd">' + $ff.d + '</p><textarea id="ta-' + $ff.k + '" data-w="' + $ff.w + '" rows="3" placeholder="Write here - autosaved"></textarea></div>')
+}
+[void]$forgeLab.Append('<div class="soptotal"><button class="btn" id="forgeExp" style="padding:5px 12px;font-size:12px">&#11015;&#65039; Export proposal spine (.txt)</button></div></div>')
+$forgeBlock = '<h3 id="forge" class="t-h" style="color:var(--brass-dk)">Proposal forge &mdash; build one from zero, not just read examples</h3><p class="lead">Your three downloadable proposals are finished exemplars; this is the machine that produced them. Seven parts, the risk register reviewers secretly look for, the scoring rubric panels actually apply, and a lab to draft your own spine in forty-word sentences.</p>
+<div class="cards">' + $forgeCards.ToString() + '</div>
+<div class="tblwrap"><table><thead><tr><th>Risk (worked example - p53 project)</th><th>Likelihood</th><th>Mitigation</th></tr></thead><tbody>' + $rr2.ToString() + '</tbody></table></div>
+<div class="tblwrap"><table><thead><tr><th>Reviewer rubric (typical BIF / DTP weights)</th><th>Weight</th><th>How you score it</th></tr></thead><tbody>' + $rb2.ToString() + '</tbody></table></div>
+' + $forgeLab.ToString()
+
 $scoreItems = @(
   @{ w=25; t='Preprint submitted to bioRxiv (M4 of the sprint)' }
   @{ w=20; t='Liò confirms he champions the Cambridge/CCAIM application' }
@@ -1007,7 +1053,7 @@ $css
 </head>
 <body>
 <header class="top"><div class="wrap"><div class="row"><div><h1>Funding hub</h1><div class="sub">Gabriele Bambini &middot; Italian/EU &middot; computational biology first (genomic data science &middot; sheaf-GNN oncology) + ML/AI &middot; Sept-2027 entry &middot; UK-first</div></div><a class="backlink" href="index.html">&#8592; Command Center</a></div><div class="kpis"><div class="kpi"><div class="n">14</div><div class="l">Universities</div></div><div class="kpi"><div class="n">$($mustSorted.Count)</div><div class="l">Must-apply funds</div></div><div class="kpi"><div class="n">$($ext.Count)</div><div class="l">External fellowships</div></div><div class="kpi"><div class="n">$($eligSorted.Count)</div><div class="l">Eligible funds</div></div></div></div></header>
-<nav class="jump"><div class="wrap"><button onclick="window.print()" style="float:right;background:var(--navy);color:#f6f4ee;border:none;border-radius:3px;padding:4px 12px;font-family:var(--sans);font-size:12.5px;cursor:pointer" title="Print or save this whole page as a PDF dossier with all links">Export PDF dossier</button><a href="#realistic">Realistic shots</a><a href="#raise">Raise your odds</a><a href="#radar">Deadlines</a><a href="#score">Readiness</a><a href="#pipeline">Pipeline</a><a href="#outreach">Outreach</a><a href="#odds">Odds</a><a href="#takehome">Money</a><a href="#docs">Documents</a><a href="#must">Must-apply</a><a href="#external">External</a><a href="#all">All funds</a><a href="#playbooks">Playbooks</a><a href="#writing">Writing studio</a><a href="#drill">Interview drill</a><a href="#intel">Intel</a><a href="#verifyq">Verify</a></div></nav>
+<nav class="jump"><div class="wrap"><button onclick="window.print()" style="float:right;background:var(--navy);color:#f6f4ee;border:none;border-radius:3px;padding:4px 12px;font-family:var(--sans);font-size:12.5px;cursor:pointer" title="Print or save this whole page as a PDF dossier with all links">Export PDF dossier</button><a href="#realistic">Realistic shots</a><a href="#raise">Raise your odds</a><a href="#radar">Deadlines</a><a href="#score">Readiness</a><a href="#pipeline">Pipeline</a><a href="#outreach">Outreach</a><a href="#odds">Odds</a><a href="#takehome">Money</a><a href="#docs">Documents</a><a href="#must">Must-apply</a><a href="#external">External</a><a href="#all">All funds</a><a href="#playbooks">Playbooks</a><a href="#writing">Writing studio</a><a href="#drill">Interview drill</a><a href="#forge">Proposal forge</a><a href="#intel">Intel</a><a href="#verifyq">Verify</a></div></nav>
 <main class="wrap">
 <div class="printhead"><b>PhD Funding Command Center &mdash; application dossier</b> &middot; Gabriele Bambini &middot; generated $today</div>
 <div class="starthere"><div class="sh-t">START HERE &mdash; this week</div><ol>
@@ -1081,6 +1127,8 @@ $playbooks
 $writeBlock
 
 $drillBlock
+
+$forgeBlock
 
 $intelSec
 
@@ -1164,6 +1212,18 @@ var dExp=document.getElementById('drillExp');
 if(dExp){dExp.addEventListener('click',function(){var L=['INTERVIEW ANSWERS - drill sheet','Gabriele Bambini - '+new Date().toISOString().slice(0,10),''];
 dtas.forEach(function(t){var lbl=t.closest('.sopblock')&&t.closest('.sopblock').querySelector('label b');L.push('== '+(lbl?lbl.textContent:t.id)+' ==');L.push(t.value||'[empty]');L.push('');});
 var blob=new Blob([L.join(String.fromCharCode(10))],{type:'text/plain'});var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='interview-answers-'+new Date().toISOString().slice(0,10)+'.txt';document.body.appendChild(a);a.click();a.remove();});}
+
+var FKEY='phdbot_forge_v1';var frg={};try{frg=JSON.parse(localStorage.getItem(FKEY)||'{}')}catch(e){}
+var ftas=document.querySelectorAll('.sopblock textarea[id^="ta-fa-"]');
+ftas.forEach(function(t){var id=t.id;if(frg[id])t.value=frg[id];var tgt=Number(t.getAttribute('data-w'))||50;
+var badge=document.getElementById('wc-'+id.slice(3));
+t.addEventListener('input',function(){frg[id]=t.value;try{localStorage.setItem(FKEY,JSON.stringify(frg))}catch(e7){}var n=wcStr(t.value);
+if(badge){badge.textContent=n+' / '+tgt;badge.style.color=n<=tgt?'var(--good)':'var(--crit)';}});
+if(badge){badge.textContent=wcStr(t.value)+' / '+tgt;}});
+var fExp=document.getElementById('forgeExp');
+if(fExp){fExp.addEventListener('click',function(){var L=['PROPOSAL SPINE - working draft','Gabriele Bambini - '+new Date().toISOString().slice(0,10),''];
+ftas.forEach(function(t){var lbl=t.closest('.sopblock')&&t.closest('.sopblock').querySelector('label b');L.push('== '+(lbl?lbl.textContent:t.id)+' ==');L.push(t.value||'[empty]');L.push('');});
+var blob=new Blob([L.join(String.fromCharCode(10))],{type:'text/plain'});var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='proposal-spine-'+new Date().toISOString().slice(0,10)+'.txt';document.body.appendChild(a);a.click();a.remove();});}
 
 var RKEY='phdbot_review_v1';var rst={};try{rst=JSON.parse(localStorage.getItem(RKEY)||'[]')}catch(e){}
 var rins=document.querySelectorAll('#wrules input[data-r]');
