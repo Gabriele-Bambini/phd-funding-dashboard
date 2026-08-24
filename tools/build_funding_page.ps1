@@ -636,7 +636,7 @@ foreach ($dq in $drillQs) {
   $skelItems = ($dq.skel | ForEach-Object { '<li>' + (Esc ([string]$_)) + '</li>' }) -join ''
   [void]$drlHtml.Append('<div class="sopblock"><label><b>Q' + $i2 + ' &middot; ' + (Esc ([string]$dq.q)) + '</b> <span class="mut">~' + $dq.w + ' words &#8776; ' + $dq.sec + 's &middot; <span id="wc-dq-' + $dq.k + '">0</span></span></label><p class="mvd">Panel is testing: ' + (Esc ([string]$dq.test)) + '</p><details class="tpl"><summary>Skeleton (peek after trying)</summary><ul class="skel">' + $skelItems + '</ul></details><textarea id="ta-dq-' + $dq.k + '" data-w="' + $dq.w + '" rows="4" aria-label="Interview answer ' + $dq.k + '" placeholder="Speak it first, then type what you said..."></textarea></div>')
 }
-[void]$drlHtml.Append('<div class="soptotal">Total: <b id="wcdtot">0</b> words <button class="btn" id="drillExp" style="padding:5px 12px;font-size:12px">&#11015;&#65039; Export answers (.txt)</button></div></div>')
+[void]$drlHtml.Append('<div class="soptotal">Total: <b id="wcdtot">0</b> words <button class="btn" id="drillExp" style="padding:5px 12px;font-size:12px">&#11015;&#65039; Export answers (.txt)</button> <button class="btn" id="scDrill" style="padding:5px 12px;font-size:12px;background:var(--brass-dk);color:#fffdf9">&#128269; Style check</button></div><div id="scOutDrill"></div></div>')
 $drillBlock = '<h3 class="t-h" style="color:var(--brass-dk)">Interview drill &mdash; eight answers every panel will ask for</h3><p class="lead">Same discipline as the SoP Lab: attempt from memory, check the skeleton, rewrite until it fits the word budget. Answers autosave locally; export before interviews and read them aloud once more.</p>' + $drlHtml.ToString()
 
 # ---------- 6h. proposal forge: architecture, risks, rubric, lab ----------
@@ -1282,6 +1282,8 @@ var scSopBtn=document.getElementById('scSop');
 if(scSopBtn){scSopBtn.addEventListener('click',function(){var tx='';tas.forEach(function(t){tx+=t.value+' ';});renderSC('scOutSop',tx,'SoP draft');});}
 var scForgeBtn=document.getElementById('scForge');
 if(scForgeBtn){scForgeBtn.addEventListener('click',function(){var fx='';ftas.forEach(function(t){fx+=t.value+' ';});renderSC('scOutForge',fx,'Proposal spine');});}
+var scDrillBtn=document.getElementById('scDrill');
+if(scDrillBtn){scDrillBtn.addEventListener('click',function(){var dx='';dtas.forEach(function(t){dx+=t.value+' ';});renderSC('scOutDrill',dx,'Interview answers');});}
 
 var VKKEY='phdbot_variants_v1';var vst2={};try{vst2=JSON.parse(localStorage.getItem(VKKEY)||'{}')}catch(e){}
 document.querySelectorAll('select[data-v]').forEach(function(s){var k=s.getAttribute('data-v');if(!vst2[k])vst2[k]={s:'',n:''};if(vst2[k].s)s.value=vst2[k].s;s.addEventListener('change',function(){vst2[k]=vst2[k]||{};vst2[k].s=s.value;try{localStorage.setItem(VKKEY,JSON.stringify(vst2))}catch(e8){}});});
