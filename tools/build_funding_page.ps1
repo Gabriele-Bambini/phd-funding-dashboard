@@ -946,6 +946,7 @@ details.tpl pre{white-space:pre-wrap;font-family:var(--mono,Consolas,monospace);
 :focus-visible{outline:2px solid var(--brass-dk);outline-offset:2px}
 .screp{margin-top:8px;padding:8px 12px;background:rgba(20,33,58,.05);border-left:3px solid var(--brass-dk);font-size:12.5px;line-height:1.6;color:var(--ink2)}
 .screp .warn{color:#b4552d;font-weight:600}
+.bknag{background:#fff3cd;border-bottom:1px solid #e0c96b;padding:8px 16px;font-size:13px;display:flex;gap:10px;align-items:center;color:#4a3b0a;flex-wrap:wrap}
 ul.skel{margin:8px 0 4px;padding-left:18px;font-size:12.5px;line-height:1.55;color:var(--ink2)}
 @media print{
  nav.jump,.q,.btn,#digestOut,.starthere{display:none!important}
@@ -1094,7 +1095,7 @@ $css
 <nav class="jump"><div class="wrap"><a class="skip" href="#realistic">Skip to content</a><button onclick="window.print()" style="float:right;background:var(--navy);color:#f6f4ee;border:none;border-radius:3px;padding:4px 12px;font-family:var(--sans);font-size:12.5px;cursor:pointer" title="Print or save this whole page as a PDF dossier with all links">Export PDF dossier</button><a href="#realistic">Realistic shots</a><a href="#raise">Raise your odds</a><a href="#radar">Deadlines</a><a href="#score">Readiness</a><a href="#pipeline">Pipeline</a><a href="#outreach">Outreach</a><a href="#odds">Odds</a><a href="#takehome">Money</a><a href="#docs">Documents</a><a href="#must">Must-apply</a><a href="#external">External</a><a href="#all">All funds</a><a href="#playbooks">Playbooks</a><a href="#writing">Writing studio</a><a href="#drill">Interview drill</a><a href="#forge">Proposal forge</a><a href="#intel">Intel</a><a href="#verifyq">Verify</a></div></nav>
 <main class="wrap">
 <div class="printhead"><b>PhD Funding Command Center &mdash; application dossier</b> &middot; Gabriele Bambini &middot; generated $today</div>
-<div class="starthere"><div class="sh-t">START HERE &mdash; this week</div><ol>
+<div class="starthere"><div class="sh-t">START HERE &mdash; this week</div><div class="mut" style="font-size:11px;margin:-4px 0 6px">Build $(Get-Date -Format 'yyyy-MM-dd HH:mm') &middot; works offline &middot; progress saved in this browser</div><ol>
 <li><b>Send the internal ask</b> to Li&ograve; &amp; Buffa (<a href="#raise">template above</a>): championing + IFOM studentship line. This unlocks everything else.</li>
 <li><b>Pencil the three referees</b>: Li&ograve; by 1 Sep &middot; Buffa by 5 Sep &middot; third by 10 Sep.</li>
 <li><b>Freeze preprint scope by 1 Sep</b> &mdash; the bioRxiv date is what converts your file before December walls.</li>
@@ -1214,7 +1215,7 @@ if(dmInputs.length){dmInputs.forEach(function(inp,i){if(dmv[i]!==undefined&&dmv[
 
 var bkE=document.getElementById('bkExp');
 if(bkE){bkE.addEventListener('click',function(){var out={};for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i);if(k.indexOf('phdbot_')===0)out[k]=localStorage.getItem(k);}
-var blob=new Blob([JSON.stringify(out,null,2)],{type:'application/json'});var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='phd-funding-progress-'+new Date().toISOString().slice(0,10)+'.json';document.body.appendChild(a);a.click();a.remove();});
+var blob=new Blob([JSON.stringify(out,null,2)],{type:'application/json'});var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='phd-funding-progress-'+new Date().toISOString().slice(0,10)+'.json';document.body.appendChild(a);a.click();a.remove();try{localStorage.setItem('phdbot_lastbackup',new Date().toISOString())}catch(eB1){}});
 var bkF=document.getElementById('bkFile');
 if(document.getElementById('bkImp')&&bkF){document.getElementById('bkImp').addEventListener('click',function(){bkF.click();});
 bkF.addEventListener('change',function(){var f=bkF.files[0];if(!f)return;var rd=new FileReader();rd.onload=function(){try{var obj=JSON.parse(rd.result);var n=0;for(var k in obj){if(k.indexOf('phdbot_')===0){localStorage.setItem(k,obj[k]);n++;}}alert('Restored '+n+' keys. Reloading.');location.reload();}catch(err){alert('Not a valid backup file.');}};rd.readAsText(f);});}}
@@ -1320,6 +1321,16 @@ var txt=L.join(String.fromCharCode(10));
 var out=document.getElementById('digestOut');out.textContent=txt;out.style.display='block';
 if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt);}});
 }
+
+var lb=null;try{lb=localStorage.getItem('phdbot_lastbackup')}catch(e){}
+var hasData=false;
+for(var i9=0;i9<localStorage.length;i9++){var k9=localStorage.key(i9);if(k9&&k9.indexOf('phdbot_')===0&&k9!=='phdbot_lastbackup'&&k9!=='phdbot_checklist_v1'){try{if((localStorage.getItem(k9)||'').length>2){hasData=true;break}}catch(e2){}}}
+var stale=!lb||((Date.now()-new Date(lb).getTime())>30*864e5);
+if(hasData&&stale){var bn=document.createElement('div');bn.className='bknag';
+bn.innerHTML='&#9888;&#65039; Your progress is not backed up recently. <button class="btn" id="nagBk" style="padding:3px 10px;font-size:11.5px">&#128190; Backup now</button> <button id="nagX" style="padding:3px 10px;font-size:11.5px;background:transparent;color:inherit;border:none;cursor:pointer;font-family:inherit">&#10005; dismiss</button>';
+var navEl=document.querySelector('.jump');navEl.parentNode.insertBefore(bn,navEl.nextSibling);
+document.getElementById('nagBk').addEventListener('click',function(){document.getElementById('bkExp').click();});
+document.getElementById('nagX').addEventListener('click',function(){bn.remove();});}
 
 window.addEventListener('beforeprint',function(){document.querySelectorAll('details').forEach(function(d){d.open=true;});});
 </script>
