@@ -97,7 +97,8 @@ $cand = [ordered]@{
   'unipv'               = @('https://dottorati.unipv.it/','https://unipv.it/')
 }
 $ok = @{}
-$cachePath = Join-Path $env:TEMP 'phdfund_probe_cache.json'
+$Temp = $env:TEMP; if (-not $Temp) { $Temp = $env:TMPDIR }; if (-not $Temp) { $Temp = '/tmp' }
+$cachePath = Join-Path $Temp 'phdfund_probe_cache.json'
 if (Test-Path $cachePath) {
   try {
     $cj = Get-Content $cachePath -Raw | ConvertFrom-Json
@@ -316,8 +317,10 @@ if ($headIdx -ge 0 -and -not $raw.Contains('name="description"')) {
   $lines = $tmpList.ToArray()
 }
 if (-not $body.Contains('funding.html#radar')) {
-  $fnav = '<div style="flex-basis:100%;font-size:12.5px;margin:-4px 0 6px;color:#5a6478">Funding hub quick links: <a href="funding.html#radar">Deadlines radar</a> &middot; <a href="funding.html#pipeline">Pipeline</a> &middot; <a href="funding.html#score">Readiness score</a> &middot; <a href="funding.html#outreach">PI outreach</a> &middot; <a href="funding.html#docs">Documents</a> &middot; <a href="funding.html#intel">Intel</a> &middot; <a href="funding.html#verifyq">Verify</a></div>'
+  $fnav = '<div style="flex-basis:100%;font-size:12.5px;margin:-4px 0 6px;color:#5a6478">Funding hub quick links: <a href="funding.html#radar">Deadlines radar</a> &middot; <a href="funding.html#pipeline">Pipeline</a> &middot; <a href="funding.html#score">Readiness score</a> &middot; <a href="funding.html#outreach">PI outreach</a> &middot; <a href="funding.html#writing">Writing studio</a> &middot; <a href="funding.html#docs">Documents</a> &middot; <a href="funding.html#intel">Intel</a> &middot; <a href="funding.html#verifyq">Verify</a></div>'
   $body = $body.Replace($kpiAnchor, ($fnav + $kpiAnchor))
+} elseif (-not $body.Contains('funding.html#writing')) {
+  $body = $body.Replace('<a href="funding.html#docs">Documents</a>', '<a href="funding.html#writing">Writing studio</a> &middot; <a href="funding.html#docs">Documents</a>')
 }
 if ($body.Contains("`n") -or $body.Contains("`r")) { throw 'newline injected into body line!' }
 
@@ -963,7 +966,7 @@ footer{border-top:1px solid var(--line);padding:18px 0 40px;color:var(--muted);f
 
 # ---------- 6e. research proposals with chain-of-verification (html + pdf) ----------
 function Probe8([string]$u) { try { $r = Invoke-WebRequest -Uri $u -Headers @{'User-Agent'=$ua} -TimeoutSec 10 -UseBasicParsing -MaximumRedirection 5; return ($r.StatusCode -eq 200) } catch { return $false } }
-$refsCachePath = Join-Path $env:TEMP 'phdfund_refs_cache.json'
+$refsCachePath = Join-Path $Temp 'phdfund_refs_cache.json'
 $refOk = @{}
 if (Test-Path $refsCachePath) { try { $rj = Get-Content $refsCachePath -Raw | ConvertFrom-Json; foreach ($pr in $rj.PSObject.Properties) { $refOk[$pr.Name] = [bool]$pr.Value } } catch { } }
 $proposals = @(
