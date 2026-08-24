@@ -306,6 +306,15 @@ if (-not $body.Contains('href="funding.html"')) {
   $body = $body.Replace($kpiAnchor, $kpiNew)
 }
 $body = [regex]::Replace($body, '<div class="n">\d+</div><div class="l">Funding page', ('<div class="n">' + $chipN + '</div><div class="l">Funding page'))
+# head meta description for index (idempotent)
+$headIdx = -1
+for ($hi = 0; $hi -lt [Math]::Min($lines.Count, 60); $hi++) { if ($lines[$hi] -match '</title>') { $headIdx = $hi; break } }
+if ($headIdx -ge 0 -and -not $raw.Contains('name="description"')) {
+  $tmpList = New-Object System.Collections.Generic.List[string]
+  $tmpList.AddRange([string[]]$lines)
+  $tmpList.Insert($headIdx + 1, '<meta name="description" content="PhD admission and funding command center for a computational-biology candidate: 72 tracked funds, honest odds, ranked supervisors, live deadline radar, writing studios.">')
+  $lines = $tmpList.ToArray()
+}
 if (-not $body.Contains('funding.html#radar')) {
   $fnav = '<div style="flex-basis:100%;font-size:12.5px;margin:-4px 0 6px;color:#5a6478">Funding hub quick links: <a href="funding.html#radar">Deadlines radar</a> &middot; <a href="funding.html#pipeline">Pipeline</a> &middot; <a href="funding.html#score">Readiness score</a> &middot; <a href="funding.html#outreach">PI outreach</a> &middot; <a href="funding.html#docs">Documents</a> &middot; <a href="funding.html#intel">Intel</a> &middot; <a href="funding.html#verifyq">Verify</a></div>'
   $body = $body.Replace($kpiAnchor, ($fnav + $kpiAnchor))
@@ -1066,6 +1075,7 @@ $html = @"
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
 <title>Funding hub &mdash; PhD Funding Command Center</title>
+<meta name="description" content="Personal PhD funding hub: honest admission odds, live deadline radar, application pipeline, ranked outreach board, writing studios (SoP lab, proposal forge) and interview drill - computational biology, entry October 2027.">
 <link rel="icon" href="icon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
