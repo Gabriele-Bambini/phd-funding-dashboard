@@ -626,21 +626,21 @@ $forgeParts = @(
 $forgeCards = New-Object System.Text.StringBuilder
 foreach ($fp in $forgeParts) { [void]$forgeCards.Append('<div class="card"><h3>' + $fp.t + '</h3><p>' + $fp.d + '</p><p class="wx"><b style="color:var(--brass-dk)">Example:</b> ' + (Esc ([string]$fp.ex)) + '</p></div>') }
 $riskRows = @(
-  @('DepMap CRISPR labels too noisy for rescue phenotype', 'Medium', 'Cross-check with PRISM; restrict to well-profiled lines; document label provenance')
-  @('Sheaf compute exceeds IFOM HPC allocation', 'Low', 'Subsample pathways by centrality; mixed-precision training; ETH CSCS backup via Lio collaboration')
-  @('Wet-lab triage list not actionable for partners', 'Medium', 'Monthly checkpoint with Buffa lab; pre-agreed criteria; conformal set-size cap')
+  [pscustomobject]@{ r='DepMap CRISPR labels too noisy for rescue phenotype'; l='Medium'; m='Cross-check with PRISM; restrict to well-profiled lines; document label provenance' }
+  [pscustomobject]@{ r='Sheaf compute exceeds IFOM HPC allocation'; l='Low'; m='Subsample pathways by centrality; mixed-precision training; ETH CSCS backup via Lio collaboration' }
+  [pscustomobject]@{ r='Wet-lab triage list not actionable for partners'; l='Medium'; m='Monthly checkpoint with Buffa lab; pre-agreed criteria; conformal set-size cap' }
 )
 $rr2 = New-Object System.Text.StringBuilder
-foreach ($rw in $riskRows) { [void]$rr2.Append('<tr><td>' + (Esc ([string]$rw[0])) + '</td><td>' + (Esc ([string]$rw[1])) + '</td><td>' + (Esc ([string]$rw[2])) + '</td></tr>') }
+foreach ($rw in $riskRows) { [void]$rr2.Append('<tr><td>' + (Esc ([string]$rw.r)) + '</td><td>' + (Esc ([string]$rw.l)) + '</td><td>' + (Esc ([string]$rw.m)) + '</td></tr>') }
 $rubricRows = @(
-  @('Significance - does the gap matter?', '25%', 'Funnel lands on a gap a reviewer cares about')
-  @('Approach - is the method sound?', '30%', 'Sheaf choice justified vs baselines; validation named per aim')
-  @('Feasibility - can THIS person do it?', '20%', 'Preliminary work exists (RA record); fallbacks written')
-  @('Fit - candidate <-> programme', '15%', 'Named groups/modules; environment answers a real need')
-  @('Training value - what will you become?', '10%', 'Skills ladder explicit: pipelines -> calibrated models -> translational contact')
+  [pscustomobject]@{ a='Significance - does the gap matter?'; w='25%'; h='Funnel lands on a gap a reviewer cares about' }
+  [pscustomobject]@{ a='Approach - is the method sound?'; w='30%'; h='Sheaf choice justified vs baselines; validation named per aim' }
+  [pscustomobject]@{ a='Feasibility - can THIS person do it?'; w='20%'; h='Preliminary work exists (RA record); fallbacks written' }
+  [pscustomobject]@{ a='Fit - candidate to programme'; w='15%'; h='Named groups/modules; environment answers a real need' }
+  [pscustomobject]@{ a='Training value - what will you become?'; w='10%'; h='Skills ladder explicit: pipelines -> calibrated models -> translational contact' }
 )
 $rb2 = New-Object System.Text.StringBuilder
-foreach ($rw2 in $rubricRows) { [void]$rb2.Append('<tr><td>' + (Esc ([string]$rw2[0])) + '</td><td><b>' + (Esc ([string]$rw2[1])) + '</b></td><td>' + (Esc ([string]$rw2[2])) + '</td></tr>') }
+foreach ($rw2 in $rubricRows) { [void]$rb2.Append('<tr><td>' + (Esc ([string]$rw2.a)) + '</td><td><b>' + (Esc ([string]$rw2.w)) + '</b></td><td>' + (Esc ([string]$rw2.h)) + '</td></tr>') }
 $forgeLab = New-Object System.Text.StringBuilder
 [void]$forgeLab.Append('<div id="forgelab" class="sopwrap"><div class="sophead"><b>Forge Lab</b> &mdash; draft YOUR proposal spine here (BIF, MSCA-DN, departmental studentships). Autosaved.</div>')
 $forgeF = @(
