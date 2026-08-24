@@ -559,7 +559,7 @@ $sopHtml = New-Object System.Text.StringBuilder
 foreach ($mv in $sopMoves) {
   [void]$sopHtml.Append('<div class="sopblock"><label><b>' + $mv.t + '</b> <span class="mut">target ~' + $mv.w + ' words &middot; <span id="wc-' + $mv.k + '">0</span></span></label><p class="mvd">' + $mv.d + '</p><textarea id="ta-' + $mv.k + '" data-w="' + $mv.w + '" rows="4" aria-label="SoP paragraph ' + $mv.k + '" placeholder="Write here - autosaved as you type"></textarea></div>')
 }
-[void]$sopHtml.Append('<div class="soptotal">Total: <b id="wctot">0</b> words <button class="btn" id="sopExp" style="padding:5px 12px;font-size:12px">&#11015;&#65039; Export draft (.txt)</button> <button class="btn" id="sopClr" style="padding:5px 12px;font-size:12px;background:var(--ink2)">Clear</button></div></div>')
+[void]$sopHtml.Append('<div class="soptotal">Total: <b id="wctot">0</b> words <button class="btn" id="sopExp" style="padding:5px 12px;font-size:12px">&#11015;&#65039; Export draft (.txt)</button> <button class="btn" id="scSop" style="padding:5px 12px;font-size:12px;background:var(--brass-dk);color:#fffdf9">&#128269; Style check</button> <button class="btn" id="sopClr" style="padding:5px 12px;font-size:12px;background:var(--ink2)">Clear</button></div><div id="scOutSop"></div></div>')
 $writeMoves = New-Object System.Text.StringBuilder
 foreach ($mv in $sopMoves) {
   [void]$writeMoves.Append('<div class="card"><h3>' + $mv.t + '</h3><p>' + $mv.d + '</p><p class="wx no2"><b>&#10007; Weak:</b> ' + (Esc ([string]$mv.weak)) + '</p><p class="wx"><b style="color:var(--good)">&#10003; Strong:</b> ' + (Esc ([string]$mv.strong)) + '</p></div>')
@@ -678,7 +678,7 @@ $forgeF = @(
 foreach ($ff in $forgeF) {
   [void]$forgeLab.Append('<div class="sopblock"><label><b>' + $ff.t + '</b> <span class="mut">max ~' + $ff.w + ' words &middot; <span id="wc-' + $ff.k + '">0</span></span></label><p class="mvd">' + $ff.d + '</p><textarea id="ta-' + $ff.k + '" data-w="' + $ff.w + '" rows="3" aria-label="Proposal ' + $ff.k + '" placeholder="Write here - autosaved"></textarea></div>')
 }
-[void]$forgeLab.Append('<div class="soptotal"><button class="btn" id="forgeExp" style="padding:5px 12px;font-size:12px">&#11015;&#65039; Export proposal spine (.txt)</button></div></div>')
+[void]$forgeLab.Append('<div class="soptotal"><button class="btn" id="forgeExp" style="padding:5px 12px;font-size:12px">&#11015;&#65039; Export proposal spine (.txt)</button> <button class="btn" id="scForge" style="padding:5px 12px;font-size:12px;background:var(--brass-dk);color:#fffdf9">&#128269; Style check</button></div><div id="scOutForge"></div></div></div>')
 $forgeBlock = '<h3 id="forge" class="t-h" style="color:var(--brass-dk)">Proposal forge &mdash; build one from zero, not just read examples</h3><p class="lead">Your three downloadable proposals are finished exemplars; this is the machine that produced them. Seven parts, the risk register reviewers secretly look for, the scoring rubric panels actually apply, and a lab to draft your own spine in forty-word sentences.</p>
 <div class="cards">' + $forgeCards.ToString() + '</div>
 <div class="tblwrap"><table><thead><tr><th>Risk (worked example - p53 project)</th><th>Likelihood</th><th>Mitigation</th></tr></thead><tbody>' + $rr2.ToString() + '</tbody></table></div>
@@ -944,6 +944,8 @@ details.tpl pre{white-space:pre-wrap;font-family:var(--mono,Consolas,monospace);
 .skip{position:absolute;left:-9999px}
 .skip:focus{left:8px;top:8px;background:#fffdf9;padding:6px 10px;z-index:99;border:2px solid var(--brass-dk);border-radius:3px;color:var(--ink)}
 :focus-visible{outline:2px solid var(--brass-dk);outline-offset:2px}
+.screp{margin-top:8px;padding:8px 12px;background:rgba(20,33,58,.05);border-left:3px solid var(--brass-dk);font-size:12.5px;line-height:1.6;color:var(--ink2)}
+.screp .warn{color:#b4552d;font-weight:600}
 ul.skel{margin:8px 0 4px;padding-left:18px;font-size:12.5px;line-height:1.55;color:var(--ink2)}
 @media print{
  nav.jump,.q,.btn,#digestOut,.starthere{display:none!important}
@@ -1260,6 +1262,25 @@ var fExp=document.getElementById('forgeExp');
 if(fExp){fExp.addEventListener('click',function(){var L=['PROPOSAL SPINE - working draft','Gabriele Bambini - '+new Date().toISOString().slice(0,10),''];
 ftas.forEach(function(t){var lbl=t.closest('.sopblock')&&t.closest('.sopblock').querySelector('label b');L.push('== '+(lbl?lbl.textContent:t.id)+' ==');L.push(t.value||'[empty]');L.push('');});
 var blob=new Blob([L.join(String.fromCharCode(10))],{type:'text/plain'});var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='proposal-spine-'+new Date().toISOString().slice(0,10)+'.txt';document.body.appendChild(a);a.click();a.remove();});}
+
+function styleCheck(t){t=(t||'').trim();if(!t)return null;var padded=' '+t.toLowerCase()+' ';
+var sents=t.split(/[.!?]+(?:[\s]|$)/).filter(function(s){return wcStr(s)>0;});
+var ws=t.split(/[\s]+/);
+var fillers=['very','really','just','actually','basically','literally','quite','utilize','leverage','in order to','it is important to note','note that'];var fl=[];
+fillers.forEach(function(f){var re=new RegExp('[^a-z]'+f.replace(' ','[\\s]+')+'[^a-z]','g');var c=(padded.match(re)||[]).length;if(c>0)fl.push(f+' x'+c);});
+var pas=(t.match(/\b(was|were|been|being)\s+\w+(ed|en)\b/gi)||[]).length;
+var ic=0;ws.forEach(function(w){if(w==='I')ic++;});
+var lens=sents.map(function(s){return wcStr(s);});var avg=lens.length?Math.round(lens.reduce(function(a,b){return a+b;},0)/lens.length):0;var lng=lens.filter(function(l){return l>32;}).length;
+function syl(w){w=w.toLowerCase().replace(/[^a-z]/g,'');if(!w)return 1;var m=w.replace(/e$/,'').match(/[aeiouy]{1,2}/g);return Math.max(1,m?m.length:1);}
+var sy=0;ws.forEach(function(w){sy+=syl(w);});
+var fre=Math.round(206.835-1.015*(ws.length/Math.max(1,sents.length))-84.6*(sy/Math.max(1,ws.length)));
+return {n:fl,pas:pas,ic:ic,avg:avg,lng:lng,fre:fre};}
+function renderSC(elId,t,label){var el=document.getElementById(elId);if(!el)return;var r=styleCheck(t);
+el.innerHTML=r?'<div class="screp"><b>&#128269; '+label+':</b> avg sentence <b>'+r.avg+'w</b>'+(r.lng?' &middot; <span class="warn">'+r.lng+' over 32w - split it</span>':'')+' &middot; readability <b>'+(r.fre>=60?'clear':(r.fre>=40?'dense':'heavy'))+'</b> ('+r.fre+')'+(r.n.length?' &middot; fillers: <span class="warn">'+r.n.join(', ')+'</span>':' &middot; no fillers &#10003;')+(r.pas?' &middot; passive hints: <span class="warn">'+r.pas+'</span>':'')+(label==='SoP draft'?' &middot; I-count: <b>'+r.ic+'</b>':'')+'</div>':'';}
+var scSopBtn=document.getElementById('scSop');
+if(scSopBtn){scSopBtn.addEventListener('click',function(){var tx='';tas.forEach(function(t){tx+=t.value+' ';});renderSC('scOutSop',tx,'SoP draft');});}
+var scForgeBtn=document.getElementById('scForge');
+if(scForgeBtn){scForgeBtn.addEventListener('click',function(){var fx='';ftas.forEach(function(t){fx+=t.value+' ';});renderSC('scOutForge',fx,'Proposal spine');});}
 
 var VKKEY='phdbot_variants_v1';var vst2={};try{vst2=JSON.parse(localStorage.getItem(VKKEY)||'{}')}catch(e){}
 document.querySelectorAll('select[data-v]').forEach(function(s){var k=s.getAttribute('data-v');if(!vst2[k])vst2[k]={s:'',n:''};if(vst2[k].s)s.value=vst2[k].s;s.addEventListener('change',function(){vst2[k]=vst2[k]||{};vst2[k].s=s.value;try{localStorage.setItem(VKKEY,JSON.stringify(vst2))}catch(e8){}});});
