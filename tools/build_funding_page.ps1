@@ -1316,7 +1316,9 @@ $d2 = $m2.Groups[1].Value | ConvertFrom-Json
 'kpi link present: ' + $raw2.Contains('href="funding.html"')
 $toolsDir = Join-Path $repo 'tools'
 New-Item -ItemType Directory -Force -Path $toolsDir | Out-Null
-Copy-Item $PSCommandPath (Join-Path $toolsDir 'build_funding_page.ps1') -Force
+$dstScript = [System.IO.Path]::GetFullPath((Join-Path $toolsDir 'build_funding_page.ps1'))
+$srcScript = [System.IO.Path]::GetFullPath($PSCommandPath)
+if ($srcScript -ne $dstScript) { Copy-Item $srcScript $dstScript -Force } else { 'tools copy skipped (running from tools/)' }
 'build script archived to tools/build_funding_page.ps1'
 $fh = [System.IO.File]::ReadAllText($fFun)
 'h2 sections: ' + ([regex]::Matches($fh, '<h2 ')).Count + ' | table rows: ' + ([regex]::Matches($fh, '<tr>')).Count + ' | https links: ' + ([regex]::Matches($fh, 'href="https')).Count
