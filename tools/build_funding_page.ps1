@@ -545,7 +545,7 @@ $sopMoves = @(
 $sopHtml = New-Object System.Text.StringBuilder
 [void]$sopHtml.Append('<div id="soplab" class="sopwrap"><div class="sophead"><b>SoP Lab</b> &mdash; write yours here, paragraph by paragraph. Autosaved in this browser; export when done.</div>')
 foreach ($mv in $sopMoves) {
-  [void]$sopHtml.Append('<div class="sopblock"><label><b>' + $mv.t + '</b> <span class="mut">target ~' + $mv.w + ' words &middot; <span id="wc-' + $mv.k + '">0</span></span></label><p class="mvd">' + $mv.d + '</p><textarea id="ta-' + $mv.k + '" data-w="' + $mv.w + '" rows="4" placeholder="Write here - autosaved as you type"></textarea></div>')
+  [void]$sopHtml.Append('<div class="sopblock"><label><b>' + $mv.t + '</b> <span class="mut">target ~' + $mv.w + ' words &middot; <span id="wc-' + $mv.k + '">0</span></span></label><p class="mvd">' + $mv.d + '</p><textarea id="ta-' + $mv.k + '" data-w="' + $mv.w + '" rows="4" aria-label="SoP paragraph ' + $mv.k + '" placeholder="Write here - autosaved as you type"></textarea></div>')
 }
 [void]$sopHtml.Append('<div class="soptotal">Total: <b id="wctot">0</b> words <button class="btn" id="sopExp" style="padding:5px 12px;font-size:12px">&#11015;&#65039; Export draft (.txt)</button> <button class="btn" id="sopClr" style="padding:5px 12px;font-size:12px;background:var(--ink2)">Clear</button></div></div>')
 $writeMoves = New-Object System.Text.StringBuilder
@@ -592,7 +592,7 @@ $varRows = @(
 $varHtml = New-Object System.Text.StringBuilder
 [void]$varHtml.Append('<div class="wrhead">Variant tracker <span class="mut">&mdash; one core SoP, five tailored endings (readiness item worth +10)</span></div><div class="tblwrap"><table id="vartable"><thead><tr><th>Programme</th><th>Tailoring hint</th><th>Status</th></tr></thead><tbody>')
 foreach ($vr in $varRows) {
-  [void]$varHtml.Append('<tr><td><b>' + (Esc ([string]$vr.p)) + '</b></td><td class="mut">' + (Esc ([string]$vr.hint)) + '</td><td><select class="psel" data-v="' + $vr.k + '"><option>not started</option><option>drafted</option><option>revised</option><option>final</option></select></td></tr>')
+  [void]$varHtml.Append('<tr><td><b>' + (Esc ([string]$vr.p)) + '</b></td><td class="mut">' + (Esc ([string]$vr.hint)) + '</td><td><select class="psel" data-v="' + $vr.k + '" aria-label="Variant status for ' + (Esc ([string]$vr.p)) + '"><option>not started</option><option>drafted</option><option>revised</option><option>final</option></select></td></tr>')
 }
 [void]$varHtml.Append('</tbody></table></div>')
 $writeBlock = '<h2 id="writing">Writing studio &mdash; learn to write your own way in <span class="mut" style="font-size:13px;font-weight:400">(SoP, scholarship essays, proposals)</span></h2><p class="lead">Committees read files, not futures. These six moves are the skeleton of every winning SoP; the scholarship map tells you how each funder bends them; the lab below is where you actually write, with word budgets and autosave; the protocol is how you revise alone like a professional.</p>' + '<div class="wprog" id="wprog"></div>' + $writeSec.ToString() + $sopHtml.ToString() + $varHtml.ToString() + '<div class="wrhead">Twelve-point protocol <span class="mut">(saved locally)</span></div><div class="wrules">' + $revHtml.ToString() + '</div>'
@@ -622,7 +622,7 @@ $i2 = 0
 foreach ($dq in $drillQs) {
   $i2++
   $skelItems = ($dq.skel | ForEach-Object { '<li>' + (Esc ([string]$_)) + '</li>' }) -join ''
-  [void]$drlHtml.Append('<div class="sopblock"><label><b>Q' + $i2 + ' &middot; ' + (Esc ([string]$dq.q)) + '</b> <span class="mut">~' + $dq.w + ' words &#8776; ' + $dq.sec + 's &middot; <span id="wc-dq-' + $dq.k + '">0</span></span></label><p class="mvd">Panel is testing: ' + (Esc ([string]$dq.test)) + '</p><details class="tpl"><summary>Skeleton (peek after trying)</summary><ul class="skel">' + $skelItems + '</ul></details><textarea id="ta-dq-' + $dq.k + '" data-w="' + $dq.w + '" rows="4" placeholder="Speak it first, then type what you said..."></textarea></div>')
+  [void]$drlHtml.Append('<div class="sopblock"><label><b>Q' + $i2 + ' &middot; ' + (Esc ([string]$dq.q)) + '</b> <span class="mut">~' + $dq.w + ' words &#8776; ' + $dq.sec + 's &middot; <span id="wc-dq-' + $dq.k + '">0</span></span></label><p class="mvd">Panel is testing: ' + (Esc ([string]$dq.test)) + '</p><details class="tpl"><summary>Skeleton (peek after trying)</summary><ul class="skel">' + $skelItems + '</ul></details><textarea id="ta-dq-' + $dq.k + '" data-w="' + $dq.w + '" rows="4" aria-label="Interview answer ' + $dq.k + '" placeholder="Speak it first, then type what you said..."></textarea></div>')
 }
 [void]$drlHtml.Append('<div class="soptotal">Total: <b id="wcdtot">0</b> words <button class="btn" id="drillExp" style="padding:5px 12px;font-size:12px">&#11015;&#65039; Export answers (.txt)</button></div></div>')
 $drillBlock = '<h3 class="t-h" style="color:var(--brass-dk)">Interview drill &mdash; eight answers every panel will ask for</h3><p class="lead">Same discipline as the SoP Lab: attempt from memory, check the skeleton, rewrite until it fits the word budget. Answers autosave locally; export before interviews and read them aloud once more.</p>' + $drlHtml.ToString()
@@ -664,7 +664,7 @@ $forgeF = @(
   @{ k='fa-a3'; w=60;  t='Aim 3 - translate / release'; d='The output someone else touches: tool, list, dataset, paper.' }
 )
 foreach ($ff in $forgeF) {
-  [void]$forgeLab.Append('<div class="sopblock"><label><b>' + $ff.t + '</b> <span class="mut">max ~' + $ff.w + ' words &middot; <span id="wc-' + $ff.k + '">0</span></span></label><p class="mvd">' + $ff.d + '</p><textarea id="ta-' + $ff.k + '" data-w="' + $ff.w + '" rows="3" placeholder="Write here - autosaved"></textarea></div>')
+  [void]$forgeLab.Append('<div class="sopblock"><label><b>' + $ff.t + '</b> <span class="mut">max ~' + $ff.w + ' words &middot; <span id="wc-' + $ff.k + '">0</span></span></label><p class="mvd">' + $ff.d + '</p><textarea id="ta-' + $ff.k + '" data-w="' + $ff.w + '" rows="3" aria-label="Proposal ' + $ff.k + '" placeholder="Write here - autosaved"></textarea></div>')
 }
 [void]$forgeLab.Append('<div class="soptotal"><button class="btn" id="forgeExp" style="padding:5px 12px;font-size:12px">&#11015;&#65039; Export proposal spine (.txt)</button></div></div>')
 $forgeBlock = '<h3 id="forge" class="t-h" style="color:var(--brass-dk)">Proposal forge &mdash; build one from zero, not just read examples</h3><p class="lead">Your three downloadable proposals are finished exemplars; this is the machine that produced them. Seven parts, the risk register reviewers secretly look for, the scoring rubric panels actually apply, and a lab to draft your own spine in forty-word sentences.</p>
@@ -716,7 +716,7 @@ foreach ($o in $outreachRows) {
   } else {
     $piHtml = '<span class="mut">programme-direct route (no pre-selection)</span>'
   }
-  [void]$orHtml.Append('<tr><td class="un">' + (Esc ([string]$o.uni)) + '</td><td>' + $piHtml + '</td><td class="pt">' + ([string]$o.angle) + '</td><td><select class="psel" data-o="' + (Esc ([string]$o.uni)) + '"><option>not started</option><option>drafted</option><option>sent</option><option>replied</option><option>call booked</option><option>applied</option><option>archived</option></select></td></tr>')
+  [void]$orHtml.Append('<tr><td class="un">' + (Esc ([string]$o.uni)) + '</td><td>' + $piHtml + '</td><td class="pt">' + ([string]$o.angle) + '</td><td><select class="psel" data-o="' + (Esc ([string]$o.uni)) + '" aria-label="Outreach status for ' + (Esc ([string]$o.uni)) + '"><option>not started</option><option>drafted</option><option>sent</option><option>replied</option><option>call booked</option><option>applied</option><option>archived</option></select></td></tr>')
 }
 $outreachSec = '<h2 id="outreach">PI outreach board <span class="mut" style="font-size:13px;font-weight:400">(state saved locally)</span></h2><p class="lead">Warm channels beat cold lists: top contacts per route with the angle that works for YOUR cv. Update the state after every send.</p><div class="tblwrap"><table id="outtable"><thead><tr><th>Route</th><th>Top contacts</th><th>Your angle</th><th>Status</th></tr></thead><tbody>' + $orHtml.ToString() + '</tbody></table></div>'
 
@@ -929,6 +929,9 @@ details.tpl pre{white-space:pre-wrap;font-family:var(--mono,Consolas,monospace);
 .wbar{height:7px;background:rgba(20,33,58,.1);border-radius:4px;overflow:hidden}
 .wbar i{display:block;height:100%;background:linear-gradient(90deg,var(--brass-dk),var(--good));transition:width .4s}
 .wpb .wn{color:var(--ink2);font-weight:600}
+.skip{position:absolute;left:-9999px}
+.skip:focus{left:8px;top:8px;background:#fffdf9;padding:6px 10px;z-index:99;border:2px solid var(--brass-dk);border-radius:3px;color:var(--ink)}
+:focus-visible{outline:2px solid var(--brass-dk);outline-offset:2px}
 ul.skel{margin:8px 0 4px;padding-left:18px;font-size:12.5px;line-height:1.55;color:var(--ink2)}
 @media print{
  nav.jump,.q,.btn,#digestOut,.starthere{display:none!important}
@@ -1073,7 +1076,7 @@ $css
 </head>
 <body>
 <header class="top"><div class="wrap"><div class="row"><div><h1>Funding hub</h1><div class="sub">Gabriele Bambini &middot; Italian/EU &middot; computational biology first (genomic data science &middot; sheaf-GNN oncology) + ML/AI &middot; Sept-2027 entry &middot; UK-first</div></div><a class="backlink" href="index.html">&#8592; Command Center</a></div><div class="kpis"><div class="kpi"><div class="n">14</div><div class="l">Universities</div></div><div class="kpi"><div class="n">$($mustSorted.Count)</div><div class="l">Must-apply funds</div></div><div class="kpi"><div class="n">$($ext.Count)</div><div class="l">External fellowships</div></div><div class="kpi"><div class="n">$($eligSorted.Count)</div><div class="l">Eligible funds</div></div></div></div></header>
-<nav class="jump"><div class="wrap"><button onclick="window.print()" style="float:right;background:var(--navy);color:#f6f4ee;border:none;border-radius:3px;padding:4px 12px;font-family:var(--sans);font-size:12.5px;cursor:pointer" title="Print or save this whole page as a PDF dossier with all links">Export PDF dossier</button><a href="#realistic">Realistic shots</a><a href="#raise">Raise your odds</a><a href="#radar">Deadlines</a><a href="#score">Readiness</a><a href="#pipeline">Pipeline</a><a href="#outreach">Outreach</a><a href="#odds">Odds</a><a href="#takehome">Money</a><a href="#docs">Documents</a><a href="#must">Must-apply</a><a href="#external">External</a><a href="#all">All funds</a><a href="#playbooks">Playbooks</a><a href="#writing">Writing studio</a><a href="#drill">Interview drill</a><a href="#forge">Proposal forge</a><a href="#intel">Intel</a><a href="#verifyq">Verify</a></div></nav>
+<nav class="jump"><div class="wrap"><a class="skip" href="#realistic">Skip to content</a><button onclick="window.print()" style="float:right;background:var(--navy);color:#f6f4ee;border:none;border-radius:3px;padding:4px 12px;font-family:var(--sans);font-size:12.5px;cursor:pointer" title="Print or save this whole page as a PDF dossier with all links">Export PDF dossier</button><a href="#realistic">Realistic shots</a><a href="#raise">Raise your odds</a><a href="#radar">Deadlines</a><a href="#score">Readiness</a><a href="#pipeline">Pipeline</a><a href="#outreach">Outreach</a><a href="#odds">Odds</a><a href="#takehome">Money</a><a href="#docs">Documents</a><a href="#must">Must-apply</a><a href="#external">External</a><a href="#all">All funds</a><a href="#playbooks">Playbooks</a><a href="#writing">Writing studio</a><a href="#drill">Interview drill</a><a href="#forge">Proposal forge</a><a href="#intel">Intel</a><a href="#verifyq">Verify</a></div></nav>
 <main class="wrap">
 <div class="printhead"><b>PhD Funding Command Center &mdash; application dossier</b> &middot; Gabriele Bambini &middot; generated $today</div>
 <div class="starthere"><div class="sh-t">START HERE &mdash; this week</div><ol>
@@ -1175,7 +1178,7 @@ var PIPE=$pipeJson;var PKEY='phdbot_pipe_v1';var pst={};try{pst=JSON.parse(local
 var STATES=['to do','preparing','submitted','interview','offer','rejected','skip'];
 var pbody=document.getElementById('pipebody');
 function pipeRender(f){if(!pbody)return;var q=(f||'').toLowerCase();var html='';for(var i=0;i<PIPE.length;i++){var x=PIPE[i];var hay=(x.n+' '+x.g).toLowerCase();if(q&&hay.indexOf(q)<0)continue;var st=pst[x.n]||'to do';var opts='';for(var j=0;j<STATES.length;j++){opts+='<option'+(STATES[j]===st?' selected':'')+'>'+STATES[j]+'</option>';}
-html+='<tr><td>'+(x.u?'<a href="'+x.u+'" target="_blank" rel="noopener">'+x.n+'</a>':x.n)+'</td><td class="mut">'+x.g+'</td><td><select class="psel '+st.replace(' ','')+'" data-p="'+encodeURIComponent(x.n)+'">'+opts+'</select></td></tr>';}
+html+='<tr><td>'+(x.u?'<a href="'+x.u+'" target="_blank" rel="noopener">'+x.n+'</a>':x.n)+'</td><td class="mut">'+x.g+'</td><td><select class="psel '+st.replace(' ','')+'" data-p="'+encodeURIComponent(x.n)+'" aria-label="State for '+x.n.replace(/"/g,'')+'">'+opts+'</select></td></tr>';}
 pbody.innerHTML=html;}
 if(pbody){pipeRender('');var qp=document.getElementById('qpipe');if(qp){qp.addEventListener('input',function(){pipeRender(this.value);});}
 pbody.addEventListener('change',function(e){var k=e.target.getAttribute&&e.target.getAttribute('data-p');if(!k)return;var name=decodeURIComponent(k);pst[name]=e.target.value;try{localStorage.setItem(PKEY,JSON.stringify(pst))}catch(e2){}e.target.className='psel '+e.target.value.replace(' ','');});}
@@ -1258,6 +1261,7 @@ var sopW=wcOfStore(sop);var drlN=0;for(var k2 in drl){if(wcStr(drl[k2])>10)drlN+
 var frgN=0;for(var k3 in frg){if(wcStr(frg[k3])>5)frgN++;}
 var revN=0;for(var k4 in rst){if(rst[k4])revN++;}
 var fin=0;for(var k5 in vst2){if(vst2[k5].s==='final')fin++;}
+var scInputs=document.querySelectorAll('#score .vqi input');if(fin>=5&&scInputs.length>5&&!scInputs[5].checked){scInputs[5].checked=true;sst[5]=true;try{localStorage.setItem(SKEY,JSON.stringify(sst))}catch(e9){}calcScore();}
 var items=[['SoP words',sopW,810,'w'],['Interview answers',drlN,8],['Forge spine',frgN,4],['Self-review',revN,12],['Variants final',fin,5]];
 el.innerHTML=items.map(function(it){var pct=Math.min(100,Math.round(it[1]/it[2]*100));return '<div class="wpb"><span class="wl">'+it[0]+'</span><div class="wbar"><i style="width:'+pct+'%"></i></div><span class="wn">'+it[1]+' / '+it[2]+(it[3]||'')+'</span></div>';}).join('');}
 renderWProg();
