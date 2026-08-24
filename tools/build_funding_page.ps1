@@ -583,6 +583,36 @@ $revHtml = New-Object System.Text.StringBuilder
 foreach ($ri in $reviewItems) { [void]$revHtml.Append('<label class="vqi"><input type="checkbox" data-r="1"><span>' + (Esc ([string]$ri)) + '</span></label>') }
 $writeBlock = '<h2 id="writing">Writing studio &mdash; learn to write your own way in <span class="mut" style="font-size:13px;font-weight:400">(SoP, scholarship essays, proposals)</span></h2><p class="lead">Committees read files, not futures. These six moves are the skeleton of every winning SoP; the scholarship map tells you how each funder bends them; the lab below is where you actually write, with word budgets and autosave; the protocol is how you revise alone like a professional.</p>' + $writeSec.ToString() + $sopHtml.ToString() + '<div class="wrhead">Twelve-point protocol <span class="mut">(saved locally)</span></div><div class="wrules">' + $revHtml.ToString() + '</div>'
 
+# ---------- 6g. interview drill ----------
+$drillQs = @(
+  @{ k='tour';   w=240; sec=110; q='Tell me about your research.'; test='structure under pressure - the 3-minute tour decides the tone of everything after';
+     skel=@('Problem: p53 rescue prediction is cell-context dependent','Gap: plain GNNs oversmooth directional pathway biology','Your move: cellular sheaf over the signalling graph','Result: one concrete separation where GCNs failed (preprint M4)','Next: conformal uncertainty -> wet-lab triage list') }
+  @{ k='sheaf';  w=180; sec=80;  q='Why sheaves and not plain GNNs / transformers?'; test='technical depth + honesty about costs';
+     skel=@('Edges carry direction and state -> stalks encode it natively','Oversmoothing argument in one sentence (Bodnar et al.)','Admit the cost: compute + data hunger on small cohorts','Name one alternative you tried or would benchmark') }
+  @{ k='fails';  w=150; sec=70;  q='What do you do if your main benchmark fails?'; test='scientific process, not optimism';
+     skel=@('Freeze splits first - never tune after looking','Error analysis by TP53/mutation class','Sanity-check baselines and label provenance','Document the negative result; pre-set a pivot criterion') }
+  @{ k='whyus';  w=140; sec=65;  q='Why this institute / programme specifically?'; test='did you do the homework';
+     skel=@('Named group(s) whose papers intersect YOUR method','Resource only they have (cohort, HPC, clinical partner)','The bridge: what your toolkit supplies that they lack','Say the programme name out loud at least once') }
+  @{ k='failstory'; w=170; sec=78; q='Tell me about a failure.'; test='maturity - STAR format, real stakes';
+     skel=@('Situation: first mosquito TE annotation pass failed QC at scale','Task: deliver a reproducible library for >70 genomes','Action: rebuilt with curation gates + validation before scale','Result: pipeline survived to publication grade; lesson stated plainly') }
+  @{ k='future'; w=100; sec=45;  q='Where do you see yourself in ten years?'; test='ambition with coordinates';
+     skel=@('A lineage from the bioRxiv line to an independent group','Geometry x clinical oncology as the long-term seam','One checkpoint per phase (PhD, postdoc, group) - no job-title worship') }
+  @{ k='ask';    w=120; sec=55;  q='Do you have questions for us?'; test='you ALWAYS have three - zero is a red flag';
+     skel=@('Supervision load + co-authorship expectations in year one','Rotation/project structure: how are projects matched?','What does the group need right now that my profile supplies?') }
+  @{ k='lay';    w=130; sec=60;  q='Explain your work to a non-expert.'; test='communication - panels include clinicians/administrators';
+     skel=@('Sport analogy start: training data = athlete measurements, noisy humans','Cancer cells as players whose playbook (p53) we learn to read','One sentence on why prediction must say "I am not sure" sometimes') }
+)
+$drlHtml = New-Object System.Text.StringBuilder
+[void]$drlHtml.Append('<div id="drill" class="sopwrap"><div class="sophead"><b>Interview drill</b> &mdash; write spoken answers here. Try from memory FIRST, then peek the skeleton. Spoken pace &asymp; 130 words/min.</div>')
+$i2 = 0
+foreach ($dq in $drillQs) {
+  $i2++
+  $skelItems = ($dq.skel | ForEach-Object { '<li>' + (Esc ([string]$_)) + '</li>' }) -join ''
+  [void]$drlHtml.Append('<div class="sopblock"><label><b>Q' + $i2 + ' &middot; ' + (Esc ([string]$dq.q)) + '</b> <span class="mut">~' + $dq.w + ' words &#8776; ' + $dq.sec + 's &middot; <span id="wc-dq-' + $dq.k + '">0</span></span></label><p class="mvd">Panel is testing: ' + (Esc ([string]$dq.test)) + '</p><details class="tpl"><summary>Skeleton (peek after trying)</summary><ul class="skel">' + $skelItems + '</ul></details><textarea id="ta-dq-' + $dq.k + '" data-w="' + $dq.w + '" rows="4" placeholder="Speak it first, then type what you said..."></textarea></div>')
+}
+[void]$drlHtml.Append('<div class="soptotal">Total: <b id="wcdtot">0</b> words <button class="btn" id="drillExp" style="padding:5px 12px;font-size:12px">&#11015;&#65039; Export answers (.txt)</button></div></div>')
+$drillBlock = '<h3 class="t-h" style="color:var(--brass-dk)">Interview drill &mdash; eight answers every panel will ask for</h3><p class="lead">Same discipline as the SoP Lab: attempt from memory, check the skeleton, rewrite until it fits the word budget. Answers autosave locally; export before interviews and read them aloud once more.</p>' + $drlHtml.ToString()
+
 $scoreItems = @(
   @{ w=25; t='Preprint submitted to bioRxiv (M4 of the sprint)' }
   @{ w=20; t='Liò confirms he champions the Cambridge/CCAIM application' }
@@ -833,6 +863,7 @@ details.tpl pre{white-space:pre-wrap;font-family:var(--mono,Consolas,monospace);
 .wx.no2 b{color:var(--crit)}
 .wrhead{font-size:14.5px;font-weight:600;margin:16px 0 8px}
 .wrules{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:6px}
+ul.skel{margin:8px 0 4px;padding-left:18px;font-size:12.5px;line-height:1.55;color:var(--ink2)}
 @media print{
  nav.jump,.q,.btn,#digestOut,.starthere{display:none!important}
  body{background:#fff;font-size:12px}
@@ -948,11 +979,12 @@ foreach ($pp in $proposals) {
   }
 }
 $propCards = New-Object System.Text.StringBuilder
+$anyPdf = ($pdfCount -gt 0) -or (Test-Path (Join-Path $propDir 'p53-sheaf-gnn.pdf'))
 foreach ($pp in $proposals) {
   $tot = @($pp.refs).Count + @($pp.cov).Count
   $okn = 0
   foreach ($rr in (@($pp.refs) + @($pp.cov))) { if ($refOk[[string]$rr.u]) { $okn++ } }
-  $ext = if ($pdfCount -gt 0) { '.pdf' } else { '.html' }
+  $ext = if ($anyPdf) { '.pdf' } else { '.html' }
   [void]$propCards.Append('<a class="src" href="proposals/' + $pp.id + $ext + '" target="_blank" rel="noopener"><span class="sn">&#128196; ' + (Esc ([string]$pp.title)) + '</span><span class="sw">' + (Esc ([string]$pp.sub)) + '</span><span class="sw"><b class="vok">&#10003;</b> CoV: ' + $okn + '/' + $tot + ' sources verified ' + $today + '</span></a>')
 }
 "proposals written: $($proposals.Count) html | $pdfCount pdf"
@@ -975,7 +1007,7 @@ $css
 </head>
 <body>
 <header class="top"><div class="wrap"><div class="row"><div><h1>Funding hub</h1><div class="sub">Gabriele Bambini &middot; Italian/EU &middot; computational biology first (genomic data science &middot; sheaf-GNN oncology) + ML/AI &middot; Sept-2027 entry &middot; UK-first</div></div><a class="backlink" href="index.html">&#8592; Command Center</a></div><div class="kpis"><div class="kpi"><div class="n">14</div><div class="l">Universities</div></div><div class="kpi"><div class="n">$($mustSorted.Count)</div><div class="l">Must-apply funds</div></div><div class="kpi"><div class="n">$($ext.Count)</div><div class="l">External fellowships</div></div><div class="kpi"><div class="n">$($eligSorted.Count)</div><div class="l">Eligible funds</div></div></div></div></header>
-<nav class="jump"><div class="wrap"><button onclick="window.print()" style="float:right;background:var(--navy);color:#f6f4ee;border:none;border-radius:3px;padding:4px 12px;font-family:var(--sans);font-size:12.5px;cursor:pointer" title="Print or save this whole page as a PDF dossier with all links">Export PDF dossier</button><a href="#realistic">Realistic shots</a><a href="#raise">Raise your odds</a><a href="#radar">Deadlines</a><a href="#score">Readiness</a><a href="#pipeline">Pipeline</a><a href="#outreach">Outreach</a><a href="#odds">Odds</a><a href="#takehome">Money</a><a href="#docs">Documents</a><a href="#must">Must-apply</a><a href="#external">External</a><a href="#all">All funds</a><a href="#playbooks">Playbooks</a><a href="#writing">Writing studio</a><a href="#intel">Intel</a><a href="#verifyq">Verify</a></div></nav>
+<nav class="jump"><div class="wrap"><button onclick="window.print()" style="float:right;background:var(--navy);color:#f6f4ee;border:none;border-radius:3px;padding:4px 12px;font-family:var(--sans);font-size:12.5px;cursor:pointer" title="Print or save this whole page as a PDF dossier with all links">Export PDF dossier</button><a href="#realistic">Realistic shots</a><a href="#raise">Raise your odds</a><a href="#radar">Deadlines</a><a href="#score">Readiness</a><a href="#pipeline">Pipeline</a><a href="#outreach">Outreach</a><a href="#odds">Odds</a><a href="#takehome">Money</a><a href="#docs">Documents</a><a href="#must">Must-apply</a><a href="#external">External</a><a href="#all">All funds</a><a href="#playbooks">Playbooks</a><a href="#writing">Writing studio</a><a href="#drill">Interview drill</a><a href="#intel">Intel</a><a href="#verifyq">Verify</a></div></nav>
 <main class="wrap">
 <div class="printhead"><b>PhD Funding Command Center &mdash; application dossier</b> &middot; Gabriele Bambini &middot; generated $today</div>
 <div class="starthere"><div class="sh-t">START HERE &mdash; this week</div><ol>
@@ -1048,6 +1080,8 @@ $playbooks
 
 $writeBlock
 
+$drillBlock
+
 $intelSec
 
 $verifySec
@@ -1100,7 +1134,7 @@ if(document.getElementById('bkImp')&&bkF){document.getElementById('bkImp').addEv
 bkF.addEventListener('change',function(){var f=bkF.files[0];if(!f)return;var rd=new FileReader();rd.onload=function(){try{var obj=JSON.parse(rd.result);var n=0;for(var k in obj){if(k.indexOf('phdbot_')===0){localStorage.setItem(k,obj[k]);n++;}}alert('Restored '+n+' keys. Reloading.');location.reload();}catch(err){alert('Not a valid backup file.');}};rd.readAsText(f);});}}
 
 var SOPKEY='phdbot_sop_v1';var sop={};try{sop=JSON.parse(localStorage.getItem(SOPKEY)||'{}')}catch(e){}
-var tas=document.querySelectorAll('.sopblock textarea');
+var tas=document.querySelectorAll('.sopblock textarea[id^="ta-"]:not([id^="ta-dq-"])');
 function wcStr(s){s=(s||'').replace(/^\s+/,'');return s?s.split(/\s+/).length:0;}
 function sopPersist(){try{localStorage.setItem(SOPKEY,JSON.stringify(sop))}catch(e){}}
 function totUpd(){var s=0;for(var i=0;i<tas.length;i++){s+=wcStr(tas[i].value);}var wt=document.getElementById('wctot');if(wt)wt.textContent=s;}
@@ -1116,7 +1150,21 @@ if(sopExp){sopExp.addEventListener('click',function(){var L=['STATEMENT OF PURPO
 tas.forEach(function(t){var lbl=t.closest('.sopblock')&&t.closest('.sopblock').querySelector('label b');L.push('== '+(lbl?lbl.textContent:t.id)+' ==');L.push(t.value||'[empty]');L.push('');});
 var blob=new Blob([L.join(String.fromCharCode(10))],{type:'text/plain'});var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='sop-draft-'+new Date().toISOString().slice(0,10)+'.txt';document.body.appendChild(a);a.click();a.remove();});}
 var sopClr=document.getElementById('sopClr');
-if(sopClr){sopClr.addEventListener('click',function(){if(!confirm('Clear all six paragraphs? Export first if unsure.'))return;tas.forEach(function(t){t.value='';});sop={};sopPersist();totUpd();var bs=document.querySelectorAll('.sopblock .mut span[id^=wc-]');bs.forEach(function(b){b.textContent='0';});});}
+if(sopClr){sopClr.addEventListener('click',function(){if(!confirm('Clear all six paragraphs? Export first if unsure.'))return;tas.forEach(function(t){t.value='';});sop={};sopPersist();totUpd();tas.forEach(function(t){var b=document.getElementById('wc-'+t.id.slice(3));if(b)b.textContent='0 / '+t.getAttribute('data-w');});});}
+
+var DRKEY='phdbot_drill_v1';var drl={};try{drl=JSON.parse(localStorage.getItem(DRKEY)||'{}')}catch(e){}
+var dtas=document.querySelectorAll('.sopblock textarea[id^="ta-dq-"]');
+function drlPersist(){try{localStorage.setItem(DRKEY,JSON.stringify(drl))}catch(e6){}}
+dtas.forEach(function(t){var id=t.id;if(drl[id])t.value=drl[id];var tgt=Number(t.getAttribute('data-w'))||120;
+var badge=document.getElementById('wc-'+id.slice(3));
+t.addEventListener('input',function(){drl[id]=t.value;drlPersist();var n=wcStr(t.value);
+if(badge){badge.textContent=n+' / '+tgt;badge.style.color=(n>=tgt*0.8&&n<=tgt*1.2)?'var(--good)':(n>tgt*1.2?'var(--crit)':'var(--brass-dk)');}});
+if(badge){badge.textContent=wcStr(t.value)+' / '+tgt;}});
+var dExp=document.getElementById('drillExp');
+if(dExp){dExp.addEventListener('click',function(){var L=['INTERVIEW ANSWERS - drill sheet','Gabriele Bambini - '+new Date().toISOString().slice(0,10),''];
+dtas.forEach(function(t){var lbl=t.closest('.sopblock')&&t.closest('.sopblock').querySelector('label b');L.push('== '+(lbl?lbl.textContent:t.id)+' ==');L.push(t.value||'[empty]');L.push('');});
+var blob=new Blob([L.join(String.fromCharCode(10))],{type:'text/plain'});var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='interview-answers-'+new Date().toISOString().slice(0,10)+'.txt';document.body.appendChild(a);a.click();a.remove();});}
+
 var RKEY='phdbot_review_v1';var rst={};try{rst=JSON.parse(localStorage.getItem(RKEY)||'[]')}catch(e){}
 var rins=document.querySelectorAll('#wrules input[data-r]');
 rins.forEach(function(c,i){c.checked=!!rst[i];c.addEventListener('change',function(){rst[i]=c.checked;try{localStorage.setItem(RKEY,JSON.stringify(rst))}catch(e5){}});});
