@@ -1205,7 +1205,7 @@ if(document.getElementById('bkImp')&&bkF){document.getElementById('bkImp').addEv
 bkF.addEventListener('change',function(){var f=bkF.files[0];if(!f)return;var rd=new FileReader();rd.onload=function(){try{var obj=JSON.parse(rd.result);var n=0;for(var k in obj){if(k.indexOf('phdbot_')===0){localStorage.setItem(k,obj[k]);n++;}}alert('Restored '+n+' keys. Reloading.');location.reload();}catch(err){alert('Not a valid backup file.');}};rd.readAsText(f);});}}
 
 var SOPKEY='phdbot_sop_v1';var sop={};try{sop=JSON.parse(localStorage.getItem(SOPKEY)||'{}')}catch(e){}
-var tas=document.querySelectorAll('.sopblock textarea[id^="ta-"]:not([id^="ta-dq-"])');
+var tas=document.querySelectorAll('.sopblock textarea[id^="ta-"]:not([id^="ta-dq-"]):not([id^="ta-fa-"])');
 function wcStr(s){s=(s||'').replace(/^\s+/,'');return s?s.split(/\s+/).length:0;}
 function sopPersist(){try{localStorage.setItem(SOPKEY,JSON.stringify(sop))}catch(e){}}
 function totUpd(){var s=0;for(var i=0;i<tas.length;i++){s+=wcStr(tas[i].value);}var wt=document.getElementById('wctot');if(wt)wt.textContent=s;}
