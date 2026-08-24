@@ -581,7 +581,21 @@ $reviewItems = @(
 )
 $revHtml = New-Object System.Text.StringBuilder
 foreach ($ri in $reviewItems) { [void]$revHtml.Append('<label class="vqi"><input type="checkbox" data-r="1"><span>' + (Esc ([string]$ri)) + '</span></label>') }
-$writeBlock = '<h2 id="writing">Writing studio &mdash; learn to write your own way in <span class="mut" style="font-size:13px;font-weight:400">(SoP, scholarship essays, proposals)</span></h2><p class="lead">Committees read files, not futures. These six moves are the skeleton of every winning SoP; the scholarship map tells you how each funder bends them; the lab below is where you actually write, with word budgets and autosave; the protocol is how you revise alone like a professional.</p>' + $writeSec.ToString() + $sopHtml.ToString() + '<div class="wrhead">Twelve-point protocol <span class="mut">(saved locally)</span></div><div class="wrules">' + $revHtml.ToString() + '</div>'
+# variants tracker (SoP per-programme tailoring)
+$varRows = @(
+  @{ k='ccaim';  p='Cambridge CCAIM';        hint='Swap the bridge paragraph to CCAIM modules + named co-supervisors; cite Li&ograve; championing' }
+  @{ k='oxdgm';  p='Oxford DPhil Genomic Med & Stats'; hint='Lead with statistics-for-genomics; Wellcome programme framing; Clarendon auto note' }
+  @{ k='ai4h';   p='Imperial AI for Healthcare CDT';   hint='Healthcare-impact paragraph; ethics/trust angle fits Safe &amp; Trusted culture' }
+  @{ k='eipp';   p='EMBL EIPP motivation letter';      hint='Ranked rotation preferences; nationality-blind tone; dry-lab-in-wet-institute answer' }
+  @{ k='kimeb';  p='KI MEB (Epi/Biostat) letter';      hint='Advert-fit mapping line by line; register/twin-data strengths of MEB named' }
+)
+$varHtml = New-Object System.Text.StringBuilder
+[void]$varHtml.Append('<div class="wrhead">Variant tracker <span class="mut">&mdash; one core SoP, five tailored endings (readiness item worth +10)</span></div><div class="tblwrap"><table id="vartable"><thead><tr><th>Programme</th><th>Tailoring hint</th><th>Status</th></tr></thead><tbody>')
+foreach ($vr in $varRows) {
+  [void]$varHtml.Append('<tr><td><b>' + (Esc ([string]$vr.p)) + '</b></td><td class="mut">' + (Esc ([string]$vr.hint)) + '</td><td><select class="psel" data-v="' + $vr.k + '"><option>not started</option><option>drafted</option><option>revised</option><option>final</option></select></td></tr>')
+}
+[void]$varHtml.Append('</tbody></table></div>')
+$writeBlock = '<h2 id="writing">Writing studio &mdash; learn to write your own way in <span class="mut" style="font-size:13px;font-weight:400">(SoP, scholarship essays, proposals)</span></h2><p class="lead">Committees read files, not futures. These six moves are the skeleton of every winning SoP; the scholarship map tells you how each funder bends them; the lab below is where you actually write, with word budgets and autosave; the protocol is how you revise alone like a professional.</p>' + '<div class="wprog" id="wprog"></div>' + $writeSec.ToString() + $sopHtml.ToString() + $varHtml.ToString() + '<div class="wrhead">Twelve-point protocol <span class="mut">(saved locally)</span></div><div class="wrules">' + $revHtml.ToString() + '</div>'
 
 # ---------- 6g. interview drill ----------
 $drillQs = @(
@@ -909,6 +923,12 @@ details.tpl pre{white-space:pre-wrap;font-family:var(--mono,Consolas,monospace);
 .wx.no2 b{color:var(--crit)}
 .wrhead{font-size:14.5px;font-weight:600;margin:16px 0 8px}
 .wrules{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:6px}
+.wprog{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;background:var(--card);border:1px solid var(--line);border-radius:3px;padding:12px 14px;margin-bottom:14px}
+.wpb{display:flex;flex-direction:column;gap:3px;font-size:11.5px}
+.wpb .wl{color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+.wbar{height:7px;background:rgba(20,33,58,.1);border-radius:4px;overflow:hidden}
+.wbar i{display:block;height:100%;background:linear-gradient(90deg,var(--brass-dk),var(--good));transition:width .4s}
+.wpb .wn{color:var(--ink2);font-weight:600}
 ul.skel{margin:8px 0 4px;padding-left:18px;font-size:12.5px;line-height:1.55;color:var(--ink2)}
 @media print{
  nav.jump,.q,.btn,#digestOut,.starthere{display:none!important}
@@ -1225,9 +1245,23 @@ if(fExp){fExp.addEventListener('click',function(){var L=['PROPOSAL SPINE - worki
 ftas.forEach(function(t){var lbl=t.closest('.sopblock')&&t.closest('.sopblock').querySelector('label b');L.push('== '+(lbl?lbl.textContent:t.id)+' ==');L.push(t.value||'[empty]');L.push('');});
 var blob=new Blob([L.join(String.fromCharCode(10))],{type:'text/plain'});var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='proposal-spine-'+new Date().toISOString().slice(0,10)+'.txt';document.body.appendChild(a);a.click();a.remove();});}
 
+var VKKEY='phdbot_variants_v1';var vst2={};try{vst2=JSON.parse(localStorage.getItem(VKKEY)||'{}')}catch(e){}
+document.querySelectorAll('select[data-v]').forEach(function(s){var k=s.getAttribute('data-v');if(!vst2[k])vst2[k]={s:'',n:''};if(vst2[k].s)s.value=vst2[k].s;s.addEventListener('change',function(){vst2[k]=vst2[k]||{};vst2[k].s=s.value;try{localStorage.setItem(VKKEY,JSON.stringify(vst2))}catch(e8){}});});
+
 var RKEY='phdbot_review_v1';var rst={};try{rst=JSON.parse(localStorage.getItem(RKEY)||'[]')}catch(e){}
 var rins=document.querySelectorAll('#wrules input[data-r]');
 rins.forEach(function(c,i){c.checked=!!rst[i];c.addEventListener('change',function(){rst[i]=c.checked;try{localStorage.setItem(RKEY,JSON.stringify(rst))}catch(e5){}});});
+
+function wcOfStore(obj){var n=0;for(var k in obj){n+=wcStr(typeof obj[k]==='string'?obj[k]:'');}return n;}
+function renderWProg(){var el=document.getElementById('wprog');if(!el)return;
+var sopW=wcOfStore(sop);var drlN=0;for(var k2 in drl){if(wcStr(drl[k2])>10)drlN++;}
+var frgN=0;for(var k3 in frg){if(wcStr(frg[k3])>5)frgN++;}
+var revN=0;for(var k4 in rst){if(rst[k4])revN++;}
+var fin=0;for(var k5 in vst2){if(vst2[k5].s==='final')fin++;}
+var items=[['SoP words',sopW,810,'w'],['Interview answers',drlN,8],['Forge spine',frgN,4],['Self-review',revN,12],['Variants final',fin,5]];
+el.innerHTML=items.map(function(it){var pct=Math.min(100,Math.round(it[1]/it[2]*100));return '<div class="wpb"><span class="wl">'+it[0]+'</span><div class="wbar"><i style="width:'+pct+'%"></i></div><span class="wn">'+it[1]+' / '+it[2]+(it[3]||'')+'</span></div>';}).join('');}
+renderWProg();
+['input','change'].forEach(function(ev){document.addEventListener(ev,function(){setTimeout(renderWProg,30);});});
 
 var OKEY='phdbot_outreach_v1';var ost={};try{ost=JSON.parse(localStorage.getItem(OKEY)||'{}')}catch(e){}
 var osels=document.querySelectorAll('select[data-o]');
