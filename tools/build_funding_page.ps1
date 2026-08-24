@@ -416,7 +416,7 @@ $raiseSec = @'
 <div class="date"><b>M5 — by 1 Dec</b><br>Preprint cited in EVERY application (Sanger wall 27 Nov → cite in SoP; Cambridge Dec → CV + SoP).</div>
 </div>
 <h3 class="t-h" style="color:var(--brass-dk)">Lever 2 &mdash; warm PI outreach: send these THIS week</h3>
-<details class="tpl"><summary>Cold-email template — external PI (copy, fill, send)</summary><pre>Subject: Prospective PhD student (2027) — sheaf-GNN models of [THEIR TOPIC]
+<details class="tpl mailtpl"><summary>Cold-email template — external PI (copy, fill, send)</summary><pre>Subject: Prospective PhD student (2027) — sheaf-GNN models of [THEIR TOPIC]
 
 Dear Professor [SURNAME],
 
@@ -437,7 +437,7 @@ planned for mid-November.
 
 Best regards,
 Gabriele Bambini — [email] · [LinkedIn]</pre></details>
-<details class="tpl"><summary>Follow-up template — day 10–12, no reply</summary><pre>Subject: Re: Prospective PhD student (2027) — sheaf-GNN models of [TOPIC]
+<details class="tpl mailtpl"><summary>Follow-up template — day 10–12, no reply</summary><pre>Subject: Re: Prospective PhD student (2027) — sheaf-GNN models of [TOPIC]
 
 Dear Professor [SURNAME],
 
@@ -448,7 +448,7 @@ confirmed]. Happy to send the 1-page summary if easier.
 
 Best regards,
 Gabriele</pre></details>
-<details class="tpl"><summary>Internal ask — Liò / Buffa (send FIRST, this week)</summary><pre>[Prof. Liò / Prof. Buffa],
+<details class="tpl mailtpl"><summary>Internal ask — Liò / Buffa (send FIRST, this week)</summary><pre>[Prof. Liò / Prof. Buffa],
 
 Two quick questions as I plan the October 2027 applications:
 
@@ -949,7 +949,7 @@ details.tpl pre{white-space:pre-wrap;font-family:var(--mono,Consolas,monospace);
 .bknag{background:#fff3cd;border-bottom:1px solid #e0c96b;padding:8px 16px;font-size:13px;display:flex;gap:10px;align-items:center;color:#4a3b0a;flex-wrap:wrap}
 ul.skel{margin:8px 0 4px;padding-left:18px;font-size:12.5px;line-height:1.55;color:var(--ink2)}
 @media print{
- nav.jump,.q,.btn,#digestOut,.starthere{display:none!important}
+ nav.jump,.q,.btn,#digestOut,.starthere,.bknag,.screp,#scOutSop,#scOutDrill,#scOutForge{display:none!important}
  body{background:#fff;font-size:12px}
  .wrap{max-width:100%;padding:0}
  h2,h3,.card,.tblwrap,details.tpl,.scorewrap,.rgrid,.srcgrid,.vqlist{break-inside:avoid}
@@ -1333,6 +1333,10 @@ bn.innerHTML='&#9888;&#65039; Your progress is not backed up recently. <button c
 var navEl=document.querySelector('.jump');navEl.parentNode.insertBefore(bn,navEl.nextSibling);
 document.getElementById('nagBk').addEventListener('click',function(){document.getElementById('bkExp').click();});
 document.getElementById('nagX').addEventListener('click',function(){bn.remove();});}
+
+document.querySelectorAll('details.mailtpl').forEach(function(d){var pre=d.querySelector('pre');if(!pre)return;var b=document.createElement('button');b.className='btn';b.style.cssText='padding:3px 10px;font-size:11.5px;margin-left:8px';b.textContent='Copy';
+b.addEventListener('click',function(e){e.preventDefault();e.stopPropagation();if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(pre.textContent).then(function(){b.textContent='Copied &#10003;';setTimeout(function(){b.textContent='Copy';},1500);});}});
+d.querySelector('summary').appendChild(b);});
 
 window.addEventListener('beforeprint',function(){document.querySelectorAll('details').forEach(function(d){d.open=true;});});
 </script>
