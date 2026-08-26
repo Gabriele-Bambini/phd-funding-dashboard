@@ -307,15 +307,18 @@ if (-not $body.Contains('href="funding.html"')) {
   $body = $body.Replace($kpiAnchor, $kpiNew)
 }
 $body = [regex]::Replace($body, '<div class="n">\d+</div><div class="l">Funding page', ('<div class="n">' + $chipN + '</div><div class="l">Funding page'))
-# head meta description for index (idempotent)
-$headIdx = -1
-for ($hi = 0; $hi -lt [Math]::Min($lines.Count, 60); $hi++) { if ($lines[$hi] -match '</title>') { $headIdx = $hi; break } }
-if ($headIdx -ge 0 -and -not $raw.Contains('name="description"')) {
-  $tmpList = New-Object System.Collections.Generic.List[string]
-  $tmpList.AddRange([string[]]$lines)
-  $tmpList.Insert($headIdx + 1, '<meta name="description" content="PhD admission and funding command center for a computational-biology candidate: 72 tracked funds, honest odds, ranked supervisors, live deadline radar, writing studios.">')
-  $lines = $tmpList.ToArray()
-}
+# head meta description for index (idempotent + self-repairing)
+# IMPORTANT: <style> opens on the SAME line as </title> in index.html.
+# Inserting after that line injects the meta INSIDE the CSS block and kills
+# every rule that follows (this broke the frontend once - do not revert).
+$metaLine = '<meta name="description" content="PhD admission and funding command center for a computational-biology candidate: 72 tracked funds, honest odds, ranked supervisors, live deadline radar, writing studios.">'
+$hasMeta = $false
+$tmpList = New-Object System.Collections.Generic.List[string]
+foreach ($l in $lines) { if ($l.Trim() -eq $metaLine) { $hasMeta = $true; continue }; $tmpList.Add($l) }
+$stIdx = -1
+for ($hi = 0; $hi -lt [Math]::Min($tmpList.Count, 60); $hi++) { if ($tmpList[$hi] -match '<style') { $stIdx = $hi; break } }
+if ($stIdx -ge 0) { $tmpList.Insert($stIdx, $metaLine) }
+$lines = $tmpList.ToArray()
 if (-not $body.Contains('funding.html#radar')) {
   $fnav = '<div style="flex-basis:100%;font-size:12.5px;margin:-4px 0 6px;color:#5a6478">Funding hub quick links: <a href="funding.html#radar">Deadlines radar</a> &middot; <a href="funding.html#pipeline">Pipeline</a> &middot; <a href="funding.html#score">Readiness score</a> &middot; <a href="funding.html#outreach">PI outreach</a> &middot; <a href="funding.html#writing">Writing studio</a> &middot; <a href="funding.html#docs">Documents</a> &middot; <a href="funding.html#intel">Intel</a> &middot; <a href="funding.html#verifyq">Verify</a></div>'
   $body = $body.Replace($kpiAnchor, ($fnav + $kpiAnchor))
