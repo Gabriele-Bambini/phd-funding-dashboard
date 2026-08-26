@@ -5,7 +5,7 @@ CALSCALE:GREGORIAN
 X-WR-CALNAME:PhD Funding Deadlines 2026-27
 BEGIN:VEVENT
 UID:phdfund-20260930-nvidiagraduatefellowshipwindowopens@gabriele-bambini
-DTSTAMP:20260826T001919Z
+DTSTAMP:20260826T011246Z
 DTSTART;VALUE=DATE:20260930
 SUMMARY:NVIDIA Graduate Fellowship — window opens
 DESCRIPTION:NVIDIA Graduate Fellowship — window opens - confirm on official page: https://www.nvidia.com/en-us/research/graduate-fellowships/
@@ -22,7 +22,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:phdfund-20261001-bifnextquarterlydeadlineapplyatphdstart@gabriele-bambini
-DTSTAMP:20260826T001919Z
+DTSTAMP:20260826T011246Z
 DTSTART;VALUE=DATE:20261001
 SUMMARY:BIF — next quarterly deadline (apply at PhD start)
 DESCRIPTION:BIF — next quarterly deadline (apply at PhD start) - confirm on official page: https://www.bifonds.de/fellowships-grants/phd-fellowships.html
@@ -39,7 +39,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:phdfund-20261024-embleippcloses@gabriele-bambini
-DTSTAMP:20260826T001919Z
+DTSTAMP:20260826T011246Z
 DTSTART;VALUE=DATE:20261024
 SUMMARY:EMBL EIPP closes
 DESCRIPTION:EMBL EIPP closes - confirm on official page: https://www.embl.de/training/eipp/
@@ -56,7 +56,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:phdfund-20261031-ellisphdcloses@gabriele-bambini
-DTSTAMP:20260826T001919Z
+DTSTAMP:20260826T011246Z
 DTSTART;VALUE=DATE:20261031
 SUMMARY:ELLIS PhD closes
 DESCRIPTION:ELLIS PhD closes - confirm on official page: https://ellis.eu/research/phd-postdoc
@@ -73,7 +73,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:phdfund-20261127-wellcomesanger4yearhardwall@gabriele-bambini
-DTSTAMP:20260826T001919Z
+DTSTAMP:20260826T011246Z
 DTSTART;VALUE=DATE:20261127
 SUMMARY:Wellcome Sanger 4-Year — HARD WALL
 DESCRIPTION:Wellcome Sanger 4-Year — HARD WALL - confirm on official page: https://www.sanger.ac.uk/study/phd/
@@ -90,7 +90,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:phdfund-20261205-oxforddecemberfieldclarendonauto@gabriele-bambini
-DTSTAMP:20260826T001919Z
+DTSTAMP:20260826T011246Z
 DTSTART;VALUE=DATE:20261205
 SUMMARY:Oxford December field (Clarendon auto)
 DESCRIPTION:Oxford December field (Clarendon auto) - confirm on official page: https://www.ox.ac.uk/admissions/graduate/funding-your-study
@@ -107,7 +107,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:phdfund-20261208-cambridgefundingdeadlinegatestrustharding@gabriele-bambini
-DTSTAMP:20260826T001919Z
+DTSTAMP:20260826T011246Z
 DTSTART;VALUE=DATE:20261208
 SUMMARY:Cambridge funding deadline (Gates · Trust · Harding)
 DESCRIPTION:Cambridge funding deadline (Gates · Trust · Harding) - confirm on official page: https://www.postgraduate.study.cam.ac.uk/finance/funding-search
@@ -124,7 +124,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:phdfund-20270115-ifomphdcallcloses@gabriele-bambini
-DTSTAMP:20260826T001919Z
+DTSTAMP:20260826T011246Z
 DTSTART;VALUE=DATE:20270115
 SUMMARY:IFOM PhD call closes
 DESCRIPTION:IFOM PhD call closes - confirm on official page: https://www.ifom.eu/en/
@@ -141,7 +141,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:phdfund-20270305-googlephdfellowshipeuopens@gabriele-bambini
-DTSTAMP:20260826T001919Z
+DTSTAMP:20260826T011246Z
 DTSTART;VALUE=DATE:20270305
 SUMMARY:Google PhD Fellowship EU — opens
 DESCRIPTION:Google PhD Fellowship EU — opens - confirm on official page: https://research.google/outreach/phd-fellowship/
@@ -158,7 +158,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:phdfund-20270501-inpsborsedottoratoesterobando@gabriele-bambini
-DTSTAMP:20260826T001919Z
+DTSTAMP:20260826T011246Z
 DTSTART;VALUE=DATE:20270501
 SUMMARY:INPS borse dottorato estero — bando
 DESCRIPTION:INPS borse dottorato estero — bando - confirm on official page: https://www.inps.it/

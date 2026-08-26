@@ -289,6 +289,7 @@ $stillPh = 0; foreach ($r in $allRows) { if (([string]$r.u) -match 'google\.com/
 # ---------- 4+5. patch the single body line inside index ----------
 $newJson = $drill | ConvertTo-Json -Depth 12 -Compress
 $lines = [System.IO.File]::ReadAllLines($fIdx)
+# body-line index MUST be recomputed after head repair below; do not move up
 $idxLine = -1
 for ($i = 0; $i -lt $lines.Count; $i++) { if ($lines[$i].StartsWith('</style><header')) { $idxLine = $i; break } }
 if ($idxLine -lt 0) { throw 'body line not found' }
@@ -318,7 +319,22 @@ foreach ($l in $lines) { if ($l.Trim() -eq $metaLine) { $hasMeta = $true; contin
 $stIdx = -1
 for ($hi = 0; $hi -lt [Math]::Min($tmpList.Count, 60); $hi++) { if ($tmpList[$hi] -match '<style') { $stIdx = $hi; break } }
 if ($stIdx -ge 0) { $tmpList.Insert($stIdx, $metaLine) }
-$lines = $tmpList.ToArray()
+# self-heal: reduced-motion media query must be closed before </style>
+$healed = New-Object System.Collections.Generic.List[string]
+for ($i = 0; $i -lt $tmpList.Count; $i++) {
+  $ln = $tmpList[$i]
+  if ($ln -match '</style>' -and $i -gt 0 -and $tmpList[$i - 1].Trim() -eq '@media (prefers-reduced-motion:reduce){') {
+    $healed.Add('  *{transition:none!important;animation:none!important}')
+    $healed.Add('}')
+  }
+  $healed.Add($ln)
+}
+$lines = $healed.ToArray()
+# recompute AFTER head insertions (meta + heal shift the body line down);
+# $body keeps the already-patched content and is written to the NEW index
+$idxLine = -1
+for ($i = 0; $i -lt $lines.Count; $i++) { if ($lines[$i].StartsWith('</style><header')) { $idxLine = $i; break } }
+if ($idxLine -lt 0) { throw 'body line not found' }
 if (-not $body.Contains('funding.html#radar')) {
   $fnav = '<div style="flex-basis:100%;font-size:12.5px;margin:-4px 0 6px;color:#5a6478">Funding hub quick links: <a href="funding.html#radar">Deadlines radar</a> &middot; <a href="funding.html#pipeline">Pipeline</a> &middot; <a href="funding.html#score">Readiness score</a> &middot; <a href="funding.html#outreach">PI outreach</a> &middot; <a href="funding.html#writing">Writing studio</a> &middot; <a href="funding.html#docs">Documents</a> &middot; <a href="funding.html#intel">Intel</a> &middot; <a href="funding.html#verifyq">Verify</a></div>'
   $body = $body.Replace($kpiAnchor, ($fnav + $kpiAnchor))
